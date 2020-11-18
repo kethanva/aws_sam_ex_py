@@ -1,0 +1,24 @@
+version: 0.2
+
+phases: 
+  install:
+    commands:
+      - echo Installing SAM...
+#      - npm install -g serverless
+  pre_build:
+    commands:
+      - echo Installing source NPM dependencies...
+#      - npm install
+#      - set -eo pipefail
+      - rm -rf ./layer1
+      - pip3 install --target ./layer1/python -r sample_code1/requirements.txt
+  build:
+    commands:
+      - echo Deployment started on `date`
+      - echo Deploying with SAM Framework
+      - sam build
+      - sam package --template-file template.yaml --s3-bucket sam-tests1 --output-template-file package.yaml
+      - sam deploy --template-file package.yaml --stack-name lambda-apps --capabilities CAPABILITY_IAM --region us-east-1
+  post_build:
+    commands:
+      - echo Deployment completed on `date`
