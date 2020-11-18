@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'sam-app
+
+  Sample SAM Template for sam-app
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  SampleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://sam-tests1/58ced59543bdbbfc5eea236c205d056d
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Layers:
+      - Ref: Layer1Deps
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+  Layer1Deps:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: sam-app-dependencies1
+      Description: Dependencies for sam app.
+      ContentUri: s3://sam-tests1/1b9bb9e7df3cac4365a37fcba4b16396
+      CompatibleRuntimes:
+      - python3.8
+      - python3.7
+      LicenseInfo: MIT
+      RetentionPolicy: Retain
+Outputs:
+  HelloWorldApi:
+    Description: 'API Gateway endpoint URL for Prod stage '
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
