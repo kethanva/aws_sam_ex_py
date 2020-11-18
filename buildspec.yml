@@ -11,7 +11,7 @@ phases:
 #      - npm install
 #      - set -eo pipefail
       - rm -rf ./layer1
-      - pip3 install --target ../layer1/python -r sample_code1/requirements.txt
+      - pip3 install --target ./layer1/python -r sample_code1/requirements.txt
   build:
     commands:
       - echo Deployment started on `date`
