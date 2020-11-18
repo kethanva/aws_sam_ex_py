@@ -18,7 +18,7 @@ phases:
       - echo Deploying with SAM Framework
       - sam build
       - sam package --template-file template.yaml --s3-bucket sam-tests1 --output-template-file package.yaml
-      - sam deploy --template-file package.yaml --stack-name lambda-apps --capabilities CAPABILITY_IAM --region us-east-1
+      - sam deploy --template-file package.yaml --stack-name lambda-apps-stg --capabilities CAPABILITY_IAM --region us-east-1
   post_build:
     commands:
       - echo Deployment completed on `date`
