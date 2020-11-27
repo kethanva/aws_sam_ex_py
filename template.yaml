@@ -2,22 +2,68 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   sam-app
-
   Sample SAM Template for sam-app
 
 Globals:
   Function:
     Timeout: 3
 
+Parameters: 
+  DeploymentEnvType: 
+    Type: String
+    Default: Dev
+    AllowedValues:
+      - Dev
+      - Stg
+      - Prod
+    Description: "What DeploymentEnv is this?"
+
+Mappings: 
+  DeploymentEnvMap:
+    Dev: 
+      DeployRegion: "us-west-2"
+      AccountId: "549665669407"
+      SGIds:
+        - "sg-789b1f5e"
+      SubnetIds:
+        - "subnet-ff78a6de"
+        - "subnet-c59af988"
+    Stg:
+      DeployRegion: "us-west-2"
+      AccountId: "549665669407"
+      SGIds:
+        - "sg-789b1f5e"
+      SubnetIds:
+        - "subnet-ff78a6de"
+        - "subnet-c59af988"
+    Prod:
+      DeployRegion: "us-west-2"
+      AccountId: "156682444160"
+      SGIds:
+        - "sg-789b1f5e"
+      SubnetIds:
+        - "subnet-ff78a6de"
+        - "subnet-c59af988"
+
 Resources:
   SampleFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
+      FunctionName: !Sub '${DeploymentEnvType}-${AWS::StackName}-samplefunction1'
+      Description: !Sub 'Sample function for ${DeploymentEnvType} and created by ${AWS::StackName}'
       CodeUri: sample_code1/
+      MemorySize: 128
       Handler: app.lambda_handler
       Runtime: python3.8
+      VpcConfig:
+            SecurityGroupIds: !FindInMap [DeploymentEnvMap, !Ref DeploymentEnvType, SGIds]
+            SubnetIds: !FindInMap [DeploymentEnvMap, !Ref DeploymentEnvType, SubnetIds]
       Layers:
         - !Ref Layer1Deps
+      Environment:
+        Variables:
+          TEST_VAR: "TEST"
+          ENV_TYPE: !Ref DeploymentEnvType
       Events:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
