@@ -16,11 +16,8 @@ phases:
     commands:
       - echo Deployment started on `date`
       - echo Deploying with SAM Framework
-      - sam build \
-      - --template template.yaml \
-      - --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Dev"
+      - sam build --template template.yaml --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Dev"
       - sam package --template-file template.yaml --s3-bucket sam-tests1 --output-template-file package.yaml
-#      - sam deploy --template-file package.yaml --stack-name lambda-apps-dev --capabilities CAPABILITY_IAM --region us-east-1
       - sam deploy --template-file package.yaml --s3-bucket sam-tests1 --stack-name lambda-apps-dev --capabilities CAPABILITY_IAM --region us-east-1 --no-confirm-changeset --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Dev"
 
 
