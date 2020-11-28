@@ -193,7 +193,7 @@ Resources:
 Outputs:
   SampleApi:
     Description: "API Gateway endpoint URL for Prod stage "
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
   #SampleFunction:
   #  Description: "Hello World Lambda Function ARN"
   #  Value: !GetAtt SampleFunction.Arn
