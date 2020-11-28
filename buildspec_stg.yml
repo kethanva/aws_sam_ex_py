@@ -18,7 +18,7 @@ phases:
       - echo Deploying with SAM Framework
       - sam build --template template.yaml --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Stg"
       - sam package --template-file template.yaml --s3-bucket sam-tests1 --output-template-file package.yaml
-      - sam deploy --template-file package.yaml --s3-bucket sam-tests1 --stack-name lambda-apps-stg --capabilities CAPABILITY_NAMED_IAM --region us-east-1 --no-confirm-changeset --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Stg"
+      - sam deploy --template-file package.yaml --s3-bucket sam-tests1 --stack-name lambda-appss-stg --capabilities CAPABILITY_NAMED_IAM --region us-east-1 --no-confirm-changeset --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Stg"
 #      - sam deploy --template-file package.yaml --s3-bucket sam-tests1 --stack-name lambda-apps-stg --capabilities CAPABILITY_IAM --region us-east-1 --no-confirm-changeset --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Stg"
 
   post_build:

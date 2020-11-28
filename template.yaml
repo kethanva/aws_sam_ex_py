@@ -144,7 +144,7 @@ Resources:
       - SampleLambdaFunctionRole
 #    DeletionPolicy : Retain
     Properties:
-      FunctionName: !Sub '${DeploymentEnvType}-samplefunction1'
+      FunctionName: !Sub '${DeploymentEnvType}-samplefunction2'
       Description: !Sub 'Sample function for ${DeploymentEnvType} and created by ${AWS::StackName}'
       CodeUri: sample_code1/
       MemorySize: 128
