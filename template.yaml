@@ -46,14 +46,14 @@ Mappings:
         - "subnet-c59af988"
 
 Resources:
-
   SampleLambdaFunctionRole:
     Type: AWS::IAM::Role
     DependsOn:
       - CommonLambdaExecutePolicy
       - CommonLambdaVpcFullPolicy
     Properties:
-      RoleName: SampleFunctionRole
+      RoleName : !Sub ${DeploymentEnvType}SampleLambdaFunctionRole
+      Description : !Sub ${DeploymentEnvType} SampleLambdaFunctionRole role created for Lambda function
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -137,7 +137,7 @@ Resources:
     Type: AWS::Serverless::Function
     DependsOn:
       - SampleLambdaFunctionRole
-    DeletionPolicy : Retain
+#    DeletionPolicy : Retain
     Properties:
       FunctionName: !Sub '${DeploymentEnvType}-samplefunction1'
       Description: !Sub 'Sample function for ${DeploymentEnvType} and created by ${AWS::StackName}'
