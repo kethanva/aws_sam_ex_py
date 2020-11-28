@@ -46,13 +46,104 @@ Mappings:
         - "subnet-c59af988"
 
 Resources:
-  SampleFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+
+  SampleLambdaFunctionRole:
+    Type: AWS::IAM::Role
+    DependsOn:
+      - CommonLambdaExecutePolicy
+      - CommonLambdaVpcFullPolicy
     Properties:
-      FunctionName: !Sub '${DeploymentEnvType}-${AWS::StackName}-samplefunction1'
+      RoleName: SampleFunctionRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref CommonLambdaExecutePolicy
+        - !Ref CommonLambdaVpcFullPolicy
+      Policies:
+      - PolicyName: AmazonS3FullAccess
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action: s3:*
+            Resource:
+            - arn:aws:s3:::exchange-data-raw
+            - arn:aws:s3:::exchange-data-raw/*
+
+  CommonLambdaExecutePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub ${DeploymentEnvType}-CommonLambdaExecutePolicy
+      Description: !Sub Policy for ${DeploymentEnvType} CommonLambdaExecutePolicy
+      Path: /
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+              - sts:GetSessionToken
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+
+  CommonLambdaS3FullPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub ${DeploymentEnvType}-CommonLambdaS3FullPolicy
+      Description: !Sub Policy for ${DeploymentEnvType} CommonLambdaS3FullPolicy
+      Path: /
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: s3:*
+            Resource: "*"
+
+  CommonLambdaVpcFullPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub ${DeploymentEnvType}-CommonLambdaVpcFullPolicy
+      Description: !Sub Policy for ${DeploymentEnvType} CommonLambdaVpcFullPolicy
+      Path: /
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+             - ec2:AssignPrivateIpAddresses
+             - ec2:UnassignPrivateIpAddresse
+             - ec2:DescribeInstances
+             - ec2:CreateNetworkInterface
+             - ec2:AttachNetworkInterface
+             - ec2:DescribeNetworkInterfaces
+             - ec2:DeleteNetworkInterface
+             - ec2:DetachNetworkInterface
+             - ec2:ModifyNetworkInterfaceAttribute
+             - ec2:ResetNetworkInterfaceAttribute
+             - autoscaling:CompleteLifecycleAction
+            Resource: "*"
+
+  SampleFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - SampleLambdaFunctionRole
+    DeletionPolicy : Retain
+    Properties:
+      FunctionName: !Sub '${DeploymentEnvType}-samplefunction1'
       Description: !Sub 'Sample function for ${DeploymentEnvType} and created by ${AWS::StackName}'
       CodeUri: sample_code1/
       MemorySize: 128
+      Role: !GetAtt SampleLambdaFunctionRole.Arn
       Handler: app.lambda_handler
       Runtime: python3.8
       VpcConfig:
@@ -66,10 +157,11 @@ Resources:
           ENV_TYPE: !Ref DeploymentEnvType
       Events:
         HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /hello
             Method: get
+
   Layer1Deps:
       Type: AWS::Serverless::LayerVersion
       Properties:
@@ -92,3 +184,13 @@ Outputs:
   #SampleFunctionIamRole:
   #  Description: "Implicit IAM Role created for Hello World function"
   #  Value: !GetAtt SampleFunctionRole.Arn
+
+
+
+#sam build --template template.yaml --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Dev"
+#sam build 
+#sam package --template-file template.yaml --s3-bucket sam-tests1 --output-template-file package.yaml 
+#sam deploy --template-file package.yaml --s3-bucket sam-tests1 --stack-name lambda-apps-dev --capabilities CAPABILITY_IAM --region us-east-1 --no-confirm-changeset --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Dev"
+#˜˜
+#sam deploy --template-file package.yaml --s3-bucket sam-tests1 --stack-name lambda-apps-dev --capabilities CAPABILITY_NAMED_IAM --region us-east-1 --no-confirm-changeset --parameter-overrides "ParameterKey=DeploymentEnvType,ParameterValue=Dev"
+
