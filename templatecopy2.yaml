@@ -133,11 +133,6 @@ Resources:
              - autoscaling:CompleteLifecycleAction
             Resource: "*"
 
-  ApiGatewayApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: !Ref DeploymentEnvType
-
   SampleFunction:
     Type: AWS::Serverless::Function
     DependsOn:
@@ -166,7 +161,6 @@ Resources:
           Properties:
             Path: /hello
             Method: get
-            RestApiId: !Ref: ApiGatewayApi
 #      EventInvokeConfig:
 #        MaximumEventAgeInSeconds: 60
 #        MaximumRetryAttempts: 1
