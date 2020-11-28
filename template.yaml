@@ -166,7 +166,7 @@ Resources:
           Properties:
             Path: /hello
             Method: get
-            RestApiId: !Ref: ApiGatewayApi
+            RestApiId: !Ref ApiGatewayApi
 #      EventInvokeConfig:
 #        MaximumEventAgeInSeconds: 60
 #        MaximumRetryAttempts: 1
