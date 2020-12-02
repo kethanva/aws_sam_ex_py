@@ -177,7 +177,9 @@ Resources:
 #          OnFailure:
 #            Type: SQS
 #            Destination: arn:aws:sqs:us-west-2:012345678901:my-queue
-
+#          On:
+#            Type: Lambda
+#            Destination: !GetAtt DestinationLambda.Arn
   Layer1Deps:
       Type: AWS::Serverless::LayerVersion
       Properties:
