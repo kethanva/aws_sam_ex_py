@@ -5,7 +5,8 @@ import requests
 def lambda_handler(event, context):
 
     try:
-        ip = "10.10.1.1" #requests.get("http://checkip.amazonaws.com/") 
+        ip = "10.10.1.1" 
+        #requests.get("http://checkip.amazonaws.com/") 
     except requests.RequestException as e:
         print(e)
         raise e
@@ -15,6 +16,7 @@ def lambda_handler(event, context):
         "body": json.dumps({
             "message": "hello world",
             "version": 11,
-            "ip":ip.text
+            "ip":ip
+#            "ip":ip.text
         }),
     }
