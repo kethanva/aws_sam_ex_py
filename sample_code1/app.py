@@ -5,7 +5,7 @@ import requests
 def lambda_handler(event, context):
 
     try:
-        ip = requests.get("http://checkip.amazonaws.com/")
+        ip = "10.10.1.1" #requests.get("http://checkip.amazonaws.com/") 
     except requests.RequestException as e:
         print(e)
         raise e
